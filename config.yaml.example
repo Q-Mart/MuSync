@@ -1,0 +1,9 @@
+local_conf:
+  music_dir: $HOME/Music
+
+server_name:
+  ip_address: 127.0.0.1
+  port: 22
+  user: Jon
+  password: password
+  music_dir: $HOME/Music
