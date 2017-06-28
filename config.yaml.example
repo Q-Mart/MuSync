@@ -1,9 +1,14 @@
 local_conf:
   music_dir: $HOME/Music
 
+#choose whatever name you want such as 'Laptop' etc.
 server_name:
-  ip_address: 127.0.0.1
-  port: 22
-  user: Jon
-  password: password
   music_dir: $HOME/Music
+
+  #If ftp is left blank, we use rsync
+  ftp:
+    #leave hostname blank if you are using a dynamically assigned IP address
+    hostname: 127.0.0.1
+    port: 21
+    user: Jon
+    password: password
