@@ -2,8 +2,11 @@
 
 from ftplib import FTP
 import yaml
-import argparse
-import re
+import parser
+import os
+
+class InvalidIPAddress(Exception):
+  pass
 
 def getConf():
   try:
@@ -16,41 +19,28 @@ def getConf():
 
   return cfg
 
-def serverDefinedInConf(name, cfg):
-  if name in cfg: return name
-  else:
-    raise argparse.ArgumentTypeError("%s is not defined in config.yaml" % name)
-
-def validIP(address):
-  ipRegex = ("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}" 
-            "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
-  if re.match(ipRegex, address):
-    return address
-  else:
-    raise argparse.ArgumentTypeError("%s is not an IP Address" % address)
-
-def parseArgs(cfg):
-
-  def availableServer(server):
-    return serverDefinedInConf(server, cfg)
-  parser = argparse.ArgumentParser(description="Synchronises music directories between two devices")
-  parser.add_argument('serverName',
-                      type = availableServer,
-                      help = "The name of the server defined in config")
-
-  parser.add_argument('-a',
-                      dest="serverAddress",
-                      type=validIP,
-                      help="IP address of server if it is dynamic")
-
-  return parser.parse_args()
-
 if __name__ == "__main__":
   cfg = getConf()
-  args = parseArgs(cfg)
-  print(args.serverName)
-  print(args.serverAddress)
+  args = parser.parseArgs(cfg)
 
-  if cfg[args.serverName]['hostname'] == 'dynamic' and not args.serverAddress:
-    print("%s uses a dynamic IP, please supply one with the -a flag or specify"
-          "the address in config.yaml" % args.serverName)
+  if cfg[args.serverName]['hostname'] == 'dynamic':
+    if args.serverAddress:
+      cfg[args.serverName]['hostname'] = args.serverAddress
+    else:
+      raise InvalidIPAddress("%s uses a dynamic IP, please supply one with the -a flag or specify"
+                             "the address in config.yaml" % args.serverName)
+
+  address = cfg[args.serverName]['hostname']
+  user = cfg[args.serverName]['ftp']['user']
+  password = cfg[args.serverName]['ftp']['password']
+  port = cfg[args.serverName]['ftp']['port']
+  localLibrary = cfg['local_conf']['music_dir']
+
+  ftp = FTP()
+  ftp.connect(address, port)
+  ftp.login(user=user, passwd=password)
+  serverFolders = set(ftp.nlst())
+  print(serverFolders)
+  localFolders = set(os.listdir(localLibrary))
+  ftp.quit()
+  print(localFolders-serverFolders)
