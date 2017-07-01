@@ -42,5 +42,12 @@ if __name__ == "__main__":
   serverFolders = set(ftp.nlst())
   print(serverFolders)
   localFolders = set(os.listdir(localLibrary))
+  diff = localFolders - serverFolders
   ftp.quit()
-  print(localFolders-serverFolders)
+
+  for item in diff:
+    fullpath = os.path.join(localLibrary, item)
+    if os.path.isfile(fullpath):
+      print("%s is a file" % fullpath)
+    elif os.path.isdir(fullpath):
+      print("%s is a folder" % fullpath)
