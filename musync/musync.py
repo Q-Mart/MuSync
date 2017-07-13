@@ -30,4 +30,4 @@ if __name__ == "__main__":
           "%s uses a dynamic IP, please supply one with the -a flag or specify"
           "the address in config.yaml" % args.serverName)
 
-    synchronizer.synchronizeWithFTP(cfg, args.serverName)
+    synchronizer.synchronize(cfg, args.serverName)
