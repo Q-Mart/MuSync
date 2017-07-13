@@ -19,10 +19,10 @@ def synchronize(cfg, serverName):
   remoteLibrary = cfg[serverName]['music_dir']
   localLibrary = cfg['local_conf']['music_dir']
 
-  rsyncArgs="-rvzn+--progress+--ignore-existing"
-  if port: rsyncArgs += "+-e+'/usr/bin/ssh -p {0}'".format(port)
+  rsyncArgs="-rvz --progress --ignore-existing"
+  if port: rsyncArgs += " -e 'ssh -p {0}'".format(port)
 
-  cmd = 'rsync+{0}+{1}+{2}@{3}:{4}'.format(rsyncArgs, localLibrary, user, address, remoteLibrary)
+  cmd = 'rsync {0} {1} {2}@{3}:{4}'.format(rsyncArgs, localLibrary, user, address, remoteLibrary)
   
   printYellow('Your command is:')
   printGreen(cmd)
