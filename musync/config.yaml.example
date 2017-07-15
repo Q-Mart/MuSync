@@ -6,9 +6,6 @@ server_name:
   music_dir: $HOME/Music
   #hostname: dynamic if you are using a dynamically assigned IP address
   hostname: 127.0.0.1
-
-  #If ftp is left blank, we use rsync
-  ftp:
-    port: 21
-    user: Jon
-    password: password
+  port: 21
+  user: Jon
+  password: password
